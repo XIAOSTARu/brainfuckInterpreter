@@ -1,0 +1,13 @@
+#pragma once
+#define DUPLICATE_SRCFILE "Duplicate source file"
+#define NOT_EXIST_OPTION  "Option does not exist."
+#define MEM_APPLIC_FAILED "Memory application failed."
+#define MEM_IS_TOO_SHORT  "Memory is too short."
+#define MEM_IS_TOO_LONG   "Memory is too long."
+#define INVALID_VALUE     "Illegal value."
+#define NO_INPUTFILE      "No input file."
+#define FILE_NOT_FOUND    "File not found."
+#define NO_OPTION_PARAM   "No Option parameter."
+#define ILLEGAL_MEMORY    "Illegal memory."
+#define STACK_IS_TOO_SHORT "Stack is too short."
+#define STACK_IS_TOO_LONG "Stack is too long."
