@@ -21,6 +21,8 @@ void help() {
 		"-D / --debug         --- Toggle debug mode (step)\n"
 		"-P / --debug_printmem--- Toggle memory print\n"
 		"-p / --debug_print   --- Print program execution status\n"
+		"-O / --debug_print_outputbuffer\n"
+		"                     --- Print output buffer\n"
 	);
 	exit(0);
 }
@@ -96,6 +98,8 @@ int main(int argc, char* argv[]) {
 						set_codesize(argv[get_option_param(&i, argc)]);
 					else if (strcmp(argv[i], "--debug_print") == 0)
 						debug_print = !debug_print;
+					else if (strcmp(argv[i], "--debug_print_outputbuffer") == 0)
+						debug_print_outputbuffer = !debug_print_outputbuffer;
 					else
 					{
 						fprintf(stderr, "Error: %s\n", NOT_EXIST_OPTION);
@@ -128,6 +132,10 @@ int main(int argc, char* argv[]) {
 				
 				case 'p':
 					debug_print = !debug_print;
+				break;
+				
+				case 'O':
+					debug_print_outputbuffer = !debug_print_outputbuffer;
 				break;
 				
 				default:

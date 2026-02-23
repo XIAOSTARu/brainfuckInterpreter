@@ -8,5 +8,6 @@ size_t codeSize   = 0;
 bool debug_printmem = false;
 bool debug = false;
 bool debug_print = false;
+bool debug_print_outputbuffer = false;
 
 char* srcfile = nullptr;

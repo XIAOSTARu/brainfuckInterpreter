@@ -6,6 +6,7 @@
 #include "typedef.h"
 #include "error.h"
 #include "setting.h"
+#include "bfio.h"
 
 unsigned char* getCode(size_t* cp);
 

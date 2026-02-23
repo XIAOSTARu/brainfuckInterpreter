@@ -113,14 +113,14 @@ void interpret() {
 			printf("pc: %ld\n", pc);
 			printf("code: ");
 			for (size_t i = 0; i < code_size; i++) {
-				if (i == pc) printf("{");
+				if (i == pc) printf(CODE_PTR_START);
 				if (codePtr[i] == '+' ||
 					codePtr[i] == '-' ||
 					codePtr[i] == '>' ||
 					codePtr[i] == '<'
 				) {
 					printf("%c%d ", codePtr[i], codePtr[i+1]);
-					if (i == pc) printf("} ");
+					if (i == pc) printf(CODE_PTR_END);
 					if (i+1 < code_size) i++;
 				} else if (
 					codePtr[i] == '[' ||
@@ -129,7 +129,7 @@ void interpret() {
 					codePtr[i] == ','
 				) {
 					printf("%c ", codePtr[i]);
-					if (i == pc) printf("} ");
+					if (i == pc) printf(CODE_PTR_END);
 				}
 			}
 			printf("\n");
@@ -178,26 +178,56 @@ void interpret() {
 				char* address = mp+i-4;
 				mems[i] = (address >= memPtr && address < memPtr + memorySize ) ? *address : 0;
 			}
-			printf("\nmem ptr: %ld / %p\n", mp - memPtr, mp);
-			printf("|%d|%d|%d|%d (%d) %d|%d|%d|%d|\n",
-				mems[0], mems[1], mems[2], mems[3], mems[4], mems[5], mems[6], mems[7], mems[8]
+			int _mp = (int)(mp - memPtr);
+			printf("\nmem ptr: %d / %p\n", _mp, mp);
+			#define TOOL_CUT_ADDR(a, b) (((a) + b) % 1000)
+			printf("Addr|%3d|%3d|%3d|%3d%s%3d%s%3d|%3d|%3d|%3d|\n",
+				TOOL_CUT_ADDR(_mp, -4),
+				TOOL_CUT_ADDR(_mp, -3),
+				TOOL_CUT_ADDR(_mp, -2),
+				TOOL_CUT_ADDR(_mp, -1),
+				MEM_PTR_START,
+				TOOL_CUT_ADDR(_mp, 0),
+				MEM_PTR_END,
+				TOOL_CUT_ADDR(_mp, 1),
+				TOOL_CUT_ADDR(_mp, 2),
+				TOOL_CUT_ADDR(_mp, 3),
+				TOOL_CUT_ADDR(_mp, 4)
 			);
-			printf("|%c|%c|%c|%c (%c) %c|%c|%c|%c|\n",
+			printf("Deci|%3d|%3d|%3d|%3d%s%3d%s%3d|%3d|%3d|%3d|\n",
+				mems[0], mems[1], mems[2], mems[3],
+				MEM_PTR_START, mems[4], MEM_PTR_END,
+				mems[5], mems[6], mems[7], mems[8]
+			);
+			printf("Hex | %02x| %02x| %02x| %02x%s %02x%s %02x| %02x| %02x| %02x|\n",
+				mems[0], mems[1], mems[2], mems[3],
+				MEM_PTR_START, mems[4], MEM_PTR_END,
+				mems[5], mems[6], mems[7], mems[8]
+			);
+			printf("Char|  %c|  %c|  %c|  %c%s  %c%s  %c|  %c|  %c|  %c|\n",
 				to_printable_ascii(mems[0]),
 				to_printable_ascii(mems[1]),
 				to_printable_ascii(mems[2]),
 				to_printable_ascii(mems[3]),
+				MEM_PTR_START,
 				to_printable_ascii(mems[4]),
+				MEM_PTR_END,
 				to_printable_ascii(mems[5]),
 				to_printable_ascii(mems[6]),
 				to_printable_ascii(mems[7]),
 				to_printable_ascii(mems[8])
 			);
 		}
+		if (debug_print_outputbuffer) {
+			printf("Output buffer:\n");
+			bfPrint();
+			printf("\n");
+		}
 		if (debug) {
 			(void)getchar();
 		}
 	}
+	bfPrint();
 	free(codePtr);
 	free(memPtr);
 	free(stackPtr);
