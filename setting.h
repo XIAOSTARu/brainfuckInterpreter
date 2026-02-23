@@ -4,7 +4,7 @@
 #include "typedef.h"
 #include "bfio.h"
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 #ifndef NO_COLOR
 
