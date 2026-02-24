@@ -5,6 +5,7 @@ size_t memorySize = 30000;
 size_t stackSize  = 256;
 size_t codeSize   = 0;
 
+bool auto_calc_codesize = false;
 bool debug_printmem = false;
 bool debug = false;
 bool debug_print = false;

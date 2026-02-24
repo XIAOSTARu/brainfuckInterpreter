@@ -1,4 +1,30 @@
 #include "interpreter.h"
+static size_t get_code_size(FILE *fp) {
+	size_t size = 0;
+	char code = 0;
+	unsigned char num = 0;
+	int filechar;
+	while ((filechar = fgetc(fp)) != EOF) {
+		switch (filechar) {
+			case '+':case '-':case '>':case '<':
+				if (code == filechar && num != 0 && num != 255) {
+					num++;
+				} else {
+					size += 2;
+					code = filechar;
+					num = 1;
+				}
+			break;
+			case '[':case ']':case '.':case ',':
+				code = 0;
+				num = 0;
+				size += 1;
+			break;
+		}
+	}
+	rewind(fp);
+	return ++size;
+}
 
 static size_t file_size(FILE *fp) {
 	fseek(fp, 0, SEEK_END);
@@ -16,7 +42,16 @@ unsigned char* getCode(size_t* cp) {
 		fprintf(stderr, "Error: %s\n", FILE_NOT_FOUND);
 		exit(261);
 	}
-	unsigned char* codePtr = malloc(codeSize == 0 ? (file_size(fp) * 2) : codeSize * sizeof(char));
+	size_t codesize;
+	if (auto_calc_codesize) {
+		codesize = get_code_size(fp);
+	} else {
+		codesize = codeSize == 0 ? (file_size(fp) * 2) : codeSize;
+	}
+	if (debug_print) {
+		printf("code buffer size: %zu\n", codesize);
+	}// debug-5
+	unsigned char* codePtr = malloc(codesize * sizeof(char));
 	if (codePtr == nullptr) {
 		fclose(fp);
 		fprintf(stderr, "Error: %s\n", MEM_APPLIC_FAILED);
@@ -105,12 +140,14 @@ void interpret() {
 	size_t* sp = stackPtr;
 	size_t* mode = nullptr;
 	for (size_t pc = 0; pc < code_size; pc++) {
+		
 		if (pc >= code_size || mp < memPtr || mp >= memPtr + memorySize || sp < stackPtr || sp > stackPtr + stackSize) {
 			fprintf(stderr, "Error: %s\n", ILLEGAL_MEMORY);
 			exit(1);
-		}
+		}// error processing
+		
 		if (debug_print) {
-			printf("pc: %ld\n", pc);
+			printf("pc: %zu\n", pc);
 			printf("code: ");
 			for (size_t i = 0; i < code_size; i++) {
 				if (i == pc) printf(CODE_PTR_START);
@@ -133,7 +170,9 @@ void interpret() {
 				}
 			}
 			printf("\n");
-		}
+		}// debug-1
+		
+		
 		if (codePtr[pc] == ']') {
 			sp--;
 			if (mode != nullptr) {
@@ -171,7 +210,9 @@ void interpret() {
 				if ((*mp) == 0) mode = sp;
 			}
 			sp++;
-		}
+		}// run code(core)
+		
+		
 		if (debug_printmem) {
 			char mems[9] = {0};
 			for (int i = 0; i < 9; i++) {
@@ -217,15 +258,15 @@ void interpret() {
 				to_printable_ascii(mems[7]),
 				to_printable_ascii(mems[8])
 			);
-		}
+		}// debug-2
 		if (debug_print_outputbuffer) {
 			printf("Output buffer:\n");
 			bfPrint();
 			printf("\n");
-		}
+		}// debug-3
 		if (debug) {
 			(void)getchar();
-		}
+		}// debug-4
 	}
 	bfPrint();
 	free(codePtr);
