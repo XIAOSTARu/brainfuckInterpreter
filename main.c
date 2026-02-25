@@ -67,15 +67,18 @@ void help() {
 	printf(
 		"-V / --version         --- Get version number\n"
 		"-H / --help            --- Get help\n"
-		"-m / --mem       [int] --- Set the memory size\n"
-		"-s / --stacksize [int] --- Set the stack size\n"
-		"-c / --codesize  [int] --- Set the code buffer size\n"
 		"-C / --auto-codesize   --- Automatically calculate code size\n"
 		"-D / --debug           --- Toggle debug mode (step)\n"
 		"-M / --debug-printmem  --- Toggle memory print\n"
 		"-P / --debug-print     --- Print program execution status\n"
 		"-O / --debug-print-outputbuffer\n"
 		"                       --- Print output buffer\n"
+		"-m / --mem       [int] --- Set the memory size\n"
+		"-s / --stacksize [int] --- Set the stack size\n"
+		"-c / --codesize  [int] --- Set the code buffer size\n"
+		"-r / --debug-callsystem [string]\n"
+		"                       --- Every time the code is executed,\n"
+		"                           the system is called once.\n"
 	);
 	exit(0);
 }
@@ -88,15 +91,6 @@ int main(int argc, char* argv[]) {
 					if (strcmp(argv[i], "--version") == 0) version();
 					
 					else if (strcmp(argv[i], "--help") == 0)  help();
-					
-					else if (strcmp(argv[i], "--mem") == 0)
-						set_memsize(argv[get_option_param(&i, argc)]);
-					
-					else if (strcmp(argv[i], "--stacksize") == 0)
-						set_stacksize(argv[get_option_param(&i, argc)]);
-					
-					else if (strcmp(argv[i], "--codesize") == 0)
-						set_codesize(argv[get_option_param(&i, argc)]);
 					
 					else if (strcmp(argv[i], "--auto-codesize") == 0)
 						auto_calc_codesize = !auto_calc_codesize;
@@ -113,6 +107,18 @@ int main(int argc, char* argv[]) {
 					else if (strcmp(argv[i], "--debug-print-outputbuffer") == 0)
 						debug_print_outputbuffer = !debug_print_outputbuffer;
 					
+					else if (strcmp(argv[i], "--mem") == 0)
+						set_memsize(argv[get_option_param(&i, argc)]);
+					
+					else if (strcmp(argv[i], "--stacksize") == 0)
+						set_stacksize(argv[get_option_param(&i, argc)]);
+					
+					else if (strcmp(argv[i], "--codesize") == 0)
+						set_codesize(argv[get_option_param(&i, argc)]);
+					
+					else if (strcmp(argv[i], "--debug-callsystem") == 0)
+						callsys = argv[get_option_param(&i, argc)];
+					
 					else
 					{
 						fprintf(stderr, "Error: %s\n", NOT_EXIST_OPTION);
@@ -120,19 +126,12 @@ int main(int argc, char* argv[]) {
 					}
 				break;
 				
-				case 'V': version();
-				case 'H': help();
-				
-				case 'm':
-					set_memsize(argv[get_option_param(&i, argc)]);
+				case 'V':
+					version();
 				break;
 				
-				case 's':
-					set_stacksize(argv[get_option_param(&i, argc)]);
-				break;
-				
-				case 'c':
-					set_codesize(argv[get_option_param(&i, argc)]);
+				case 'H':
+					help();
 				break;
 				
 				case 'C':
@@ -153,6 +152,22 @@ int main(int argc, char* argv[]) {
 				
 				case 'O':
 					debug_print_outputbuffer = !debug_print_outputbuffer;
+				break;
+				
+				case 'm':
+					set_memsize(argv[get_option_param(&i, argc)]);
+				break;
+				
+				case 's':
+					set_stacksize(argv[get_option_param(&i, argc)]);
+				break;
+				
+				case 'c':
+					set_codesize(argv[get_option_param(&i, argc)]);
+				break;
+				
+				case 'r':
+					callsys = argv[get_option_param(&i, argc)];
 				break;
 				
 				default:

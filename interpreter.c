@@ -121,6 +121,7 @@ unsigned char* getCode(size_t* cp) {
 }
 
 void interpret() {
+	// init
 	size_t code_size;
 	unsigned char* codePtr = getCode(&code_size);
 	char* memPtr = calloc(memorySize , sizeof(char));
@@ -136,15 +137,19 @@ void interpret() {
 		fprintf(stderr, "Error: %s\n", MEM_APPLIC_FAILED);
 		exit(264);
 	}
-	char* mp = memPtr;
-	size_t* sp = stackPtr;
-	size_t* mode = nullptr;
+	char* mp = memPtr;size_t* sp = stackPtr;size_t* mode = nullptr;
+	
+	// run code
 	for (size_t pc = 0; pc < code_size; pc++) {
 		
 		if (pc >= code_size || mp < memPtr || mp >= memPtr + memorySize || sp < stackPtr || sp > stackPtr + stackSize) {
 			fprintf(stderr, "Error: %s\n", ILLEGAL_MEMORY);
 			exit(1);
 		}// error processing
+		
+		if (callsys != nullptr) {
+			system(callsys);
+		}
 		
 		if (debug_print) {
 			printf("pc: %zu\n", pc);

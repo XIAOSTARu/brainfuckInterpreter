@@ -4,7 +4,7 @@
 #include "typedef.h"
 #include "bfio.h"
 
-#define VERSION "1.0.2"
+#define VERSION "1.0.3"
 
 #ifndef NO_COLOR
 
@@ -45,3 +45,4 @@ extern bool debug_print;
 extern bool debug_print_outputbuffer;
 
 extern char* srcfile;
+extern char* callsys;

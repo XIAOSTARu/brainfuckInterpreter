@@ -12,3 +12,4 @@ bool debug_print = false;
 bool debug_print_outputbuffer = false;
 
 char* srcfile = nullptr;
+char* callsys = nullptr;
