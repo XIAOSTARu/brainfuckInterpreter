@@ -73,6 +73,7 @@ void help() {
 		"-P / --debug-print     --- Print program execution status\n"
 		"-O / --debug-print-outputbuffer\n"
 		"                       --- Print output buffer\n"
+		"-E / --execute         --- Read code directly from the command line\n"
 		"-m / --mem       [int] --- Set the memory size\n"
 		"-s / --stacksize [int] --- Set the stack size\n"
 		"-c / --codesize  [int] --- Set the code buffer size\n"
@@ -106,6 +107,10 @@ int main(int argc, char* argv[]) {
 					
 					else if (strcmp(argv[i], "--debug-print-outputbuffer") == 0)
 						debug_print_outputbuffer = !debug_print_outputbuffer;
+					
+					else if (strcmp(argv[i], "--execute") == 0)
+						is_inline_code = !is_inline_code;
+					
 					
 					else if (strcmp(argv[i], "--mem") == 0)
 						set_memsize(argv[get_option_param(&i, argc)]);
@@ -153,6 +158,11 @@ int main(int argc, char* argv[]) {
 				case 'O':
 					debug_print_outputbuffer = !debug_print_outputbuffer;
 				break;
+				
+				case 'E':
+					is_inline_code = !is_inline_code;
+				break;
+				
 				
 				case 'm':
 					set_memsize(argv[get_option_param(&i, argc)]);

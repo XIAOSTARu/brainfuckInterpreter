@@ -1,4 +1,5 @@
 # brainfuckInterpreter
+- 版本 1.0.4
 - brainfuck解释器，带调试功能。
 - 优化了原版brainfuck指令，对连续的`+-><`进行压缩
 - 使用栈存储循环位置
@@ -15,4 +16,10 @@ clang main.c interpreter.c setting.c bfio.c -o brainfuck
 ```shell
 ./brainfuck --help
 ```
-- 2026y 2m 25d
+# 更新内容
+- 参数 `-E` 可以直接执行bf代码，而不是从文件读取
+如：
+```shell
+./brainfuck -E "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
+```
+- 2026y 2m 26d

@@ -25,6 +25,34 @@ static size_t get_code_size(FILE *fp) {
 	rewind(fp);
 	return ++size;
 }
+static size_t get_code_size_str(char* code) {
+	size_t size = 0;
+	char last_code = 0;
+	unsigned char num = 0;
+	while (*code != '\0') {
+		int filechar = (unsigned char)*code;
+		switch (filechar) {
+			case '+':case '-':case '>':case '<':
+				if (last_code == filechar && num != 0 && num != 255) {
+					num++;
+				} else {
+					size += 2;
+					last_code = filechar;
+					num = 1;
+				}
+				break;
+			case '[':case ']':case '.':case ',':
+				last_code = 0;
+				num = 0;
+				size += 1;
+				break;
+			default:
+				break;
+		}
+		code++;
+	}
+	return ++size;
+}
 
 static size_t file_size(FILE *fp) {
 	fseek(fp, 0, SEEK_END);
@@ -37,30 +65,37 @@ static char to_printable_ascii(char a) {
 }
 
 unsigned char* getCode(size_t* cp) {
-	FILE* fp = fopen(srcfile, "r");
-	if (!fp) {
-		fprintf(stderr, "Error: %s\n", FILE_NOT_FOUND);
-		exit(261);
+	FILE* fp = nullptr;
+	if (!is_inline_code) {
+		fp = fopen(srcfile, "r");
+		if (!fp) {
+			fprintf(stderr, "Error: %s\n", FILE_NOT_FOUND);
+			exit(261);
+		}
 	}
 	size_t codesize;
 	if (auto_calc_codesize) {
-		codesize = get_code_size(fp);
+		if (!is_inline_code) codesize = get_code_size(fp);
+		else codesize = get_code_size_str(srcfile);
 	} else {
-		codesize = codeSize == 0 ? (file_size(fp) * 2) : codeSize;
+		if (!is_inline_code) codesize = codeSize == 0 ? (file_size(fp) * 2) : codeSize;
+		else codesize = codeSize == 0 ? 1000 : codeSize;
 	}
 	if (debug_print) {
 		printf("code buffer size: %zu\n", codesize);
 	}// debug-5
 	unsigned char* codePtr = malloc(codesize * sizeof(char));
 	if (codePtr == nullptr) {
-		fclose(fp);
+		if (!is_inline_code) fclose(fp);
 		fprintf(stderr, "Error: %s\n", MEM_APPLIC_FAILED);
 		exit(262);
 	}
 	*cp = 0;
-	int filechar;
+	
+	int filechar = is_inline_code ? *srcfile++ : fgetc(fp);
 	bool is_instruction = true;
-	while ((filechar = fgetc(fp)) != EOF) {
+	
+	while (is_inline_code ? (filechar != 0) : (filechar != EOF)) {
 		if (is_instruction) {
 			switch (filechar) {
 				case '+':
@@ -114,9 +149,10 @@ unsigned char* getCode(size_t* cp) {
 		} else {
 			is_instruction = true;
 		}
+		filechar = is_inline_code ? *srcfile++ : fgetc(fp);
 	}
 	codePtr[*cp] = 0;
-	fclose(fp);
+	if (!is_inline_code) fclose(fp);
 	return codePtr;
 }
 

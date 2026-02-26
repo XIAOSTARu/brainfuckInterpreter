@@ -4,7 +4,7 @@
 #include "typedef.h"
 #include "bfio.h"
 
-#define VERSION "1.0.3"
+#define VERSION "1.0.4"
 
 #ifndef NO_COLOR
 
@@ -38,6 +38,7 @@ extern size_t memorySize;
 extern size_t stackSize;
 extern size_t codeSize;
 
+extern bool is_inline_code;
 extern bool auto_calc_codesize;
 extern bool debug_printmem;
 extern bool debug;
